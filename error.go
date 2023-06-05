@@ -42,7 +42,10 @@ func Trace(err error) error {
 	if err == nil {
 		return nil
 	}
-	e := &Error{Err: err}
+	e, ok := err.(*Error)
+	if !ok || len(e.Stack) != 0 {
+		e = &Error{Err: err}
+	}
 
 	pc := make([]uintptr, MaxStackDepth)
 	n := runtime.Callers(2, pc)
